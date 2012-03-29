@@ -1,0 +1,15 @@
+@{
+    ViewBag.Title = "e-Socium";
+}
+<h1>
+    Главная страница</h1>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div style="margin-top: 15px;">
+        Вы вошли как <b>@User.Identity.Name</b></div>
+    if (User.IsInRole("Администратор"))
+    {
+        <div>У вас права администратора</div>
+    }
+}
