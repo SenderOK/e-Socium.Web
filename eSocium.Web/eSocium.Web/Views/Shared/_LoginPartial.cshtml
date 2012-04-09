@@ -1,11 +1,11 @@
 ﻿@if (Request.IsAuthenticated) {
     <p>
-        Здравствуйте, <b>@User.Identity.Name</b>!
-        @Html.ActionLink("Выход", "LogOff", "Account")
+        @Globalization.Hello, <b>@User.Identity.Name</b>!
+        @Html.ActionLink(Globalization.Logout, "LogOff", "Account")
     </p>
 } else {
     <ul>
-        <li>@Html.ActionLink("Регистрация", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", data_dialog_title = "Registration" })</li>
-        <li>@Html.ActionLink("Вход", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", data_dialog_title = "Identification" })</li>
+        <li>@Html.ActionLink(Globalization.Signup, "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", data_dialog_title = "Registration" })</li>
+        <li>@Html.ActionLink(Globalization.Signin, "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", data_dialog_title = "Identification" })</li>
     </ul>
 }

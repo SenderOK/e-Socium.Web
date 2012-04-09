@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using eSocium.Web.Models.DAL;
+using eSocium.Web.Utility;
 
 namespace eSocium.Web.Controllers
 {
@@ -11,7 +12,7 @@ namespace eSocium.Web.Controllers
     /// Главный контроллер сайта, который содержит в себе информационные страницы и ссылки на 
     /// подпроекты
     /// </summary>
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         UserContext db = new UserContext();
 

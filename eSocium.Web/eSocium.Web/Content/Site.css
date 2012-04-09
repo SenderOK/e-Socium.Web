@@ -146,6 +146,11 @@ footer {
         padding: 2px 3px;
         text-decoration: none;
     }
+    
+    #login div.lang-picker-wrapper
+    {
+        margin: 10px 0px;
+    }
 
     #login a.username {
         background: none;
