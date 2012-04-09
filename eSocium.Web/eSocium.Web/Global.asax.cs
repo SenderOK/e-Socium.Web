@@ -49,7 +49,7 @@ namespace eSocium.Web
             if (cultureCookie != null)
                 cultureName = cultureCookie.Value;
             else
-                cultureName = Request.UserLanguages[0]; // obtain it from HTTP header AcceptLanguages
+                cultureName = "ru-RU";//Request.UserLanguages[0]; // obtain it from HTTP header AcceptLanguages
 
             // Validate culture name
             cultureName = CultureHelper.GetImplementedCulture(cultureName); // This is safe
