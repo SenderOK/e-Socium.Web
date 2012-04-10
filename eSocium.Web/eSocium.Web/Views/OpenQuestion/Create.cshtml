@@ -1,0 +1,68 @@
+﻿@model eSocium.Web.Models.OpenQuestions.Question
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Question</legend>
+
+        @Html.Hidden("poll_id", Model.Poll.PollId)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Form)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Form)
+            @Html.ValidationMessageFor(model => model.Form)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Mark)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Mark)
+            @Html.ValidationMessageFor(model => model.Mark)
+        </div>
+
+        <div class="editor-label">
+            An .xlsx file to upload
+        </div>
+        <div class="editor-field">
+            <input id="xlsFile" type="file" name="xlsFile" />
+            @if (ViewBag.FileError != null)
+            {
+                @ViewBag.FileError.ToString();
+            }
+        </div>
+
+        <div class="editor-label">
+            Number of sheet with questions
+        </div>
+        <div class="editor-field">
+            <input id="sheetNumber" type="text" name="sheetNumber" value=@ViewBag.SheetNumber />
+        </div>
+        <div class="editor-label">
+             Has header?
+        </div>
+        <div class="editor-field">
+        <input type="checkbox" name="header" value = "true"/>
+        </div>
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to Poll", "Details", "OpenPoll", new { id = Model.Poll.PollId }, null)
+</div>
