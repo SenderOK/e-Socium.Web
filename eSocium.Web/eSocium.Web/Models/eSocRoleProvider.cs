@@ -54,7 +54,7 @@ namespace eSocium.Web.Models
             {
                 return new string[0];
             }
-            var user = db.Users.First(u => u.Login.Equals(username));
+            var user = db.Users.FirstOrDefault(u => u.Login.Equals(username));
             if (user == null)
             {
                 throw new Exception("Не найден пользователь " + username);
