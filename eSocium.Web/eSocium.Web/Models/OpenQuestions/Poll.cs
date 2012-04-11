@@ -34,6 +34,7 @@ namespace eSocium.Web.Models.OpenQuestions
         public int QuestionId { get; set; }
         public virtual Poll Poll { get; set; }
         [Display(Name = "Formulation")]
+        [Required]
         public string Form { get; set; }
         [Display(Name = "Mark")]
         public string Mark { get; set; }

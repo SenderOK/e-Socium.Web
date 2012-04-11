@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("eSocium.Web")]
-[assembly: AssemblyDescription("eSocium Laboratory Web Portal")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("eSocium Lab")]
-[assembly: AssemblyProduct("eSocium Web Portal")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("eSocium.Web")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
-[assembly: AssemblyTrademark("eSocium")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

@@ -115,7 +115,7 @@ namespace eSocium.Web.Controllers.OpenQuestions
             }
             catch (Exception e)
             {
-                ViewBag.FileError = "You must upload a valid xlsx file! " + e.ToString();
+                ViewBag.FileError = "You must upload a valid xlsx file! " + e.Message;
                 return View(question);
             }
         }
