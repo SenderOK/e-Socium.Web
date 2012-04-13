@@ -23,9 +23,9 @@
              <label for="header">Has header?</label>
         </div>
         <div class="editor-field">
-            <input type="checkbox" name="header" value = "true" id="hasHeaderCheckbox"/>
+            <input type="checkbox" name="header" value = "true" id="hasHeaderCheckbox" 
+               @Html.Raw(((ViewBag.header) ? "checked=\"checked\"" : ""))/>
         </div>
-
         <div class="editor-label">
             @Html.LabelFor(model => model.Form)
         </div>
