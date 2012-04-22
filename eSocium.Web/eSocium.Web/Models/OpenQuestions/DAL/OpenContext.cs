@@ -19,6 +19,14 @@ namespace eSocium.Web.Models.OpenQuestions.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            modelBuilder.Entity<Question>()
+                        .HasRequired(q => q.Poll)
+                        .WithMany(p => p.Questions)
+                        .WillCascadeOnDelete();
+            modelBuilder.Entity<Answer>()
+                        .HasRequired(a => a.Question)
+                        .WithMany(q => q.Answers)
+                        .WillCascadeOnDelete();
         }
     }
 }

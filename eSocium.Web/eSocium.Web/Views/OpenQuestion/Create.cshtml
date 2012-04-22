@@ -8,6 +8,7 @@
 
 <script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script src="@Url.Content("~/Scripts/Open/CreateQuestions.js")"></script>
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
@@ -18,6 +19,13 @@
 
         @Html.Hidden("poll_id", Model.Poll.PollId)
 
+        <div class="editor-label">
+             <label for="header">Has header?</label>
+        </div>
+        <div class="editor-field">
+            <input type="checkbox" name="header" value = "true" id="hasHeaderCheckbox" 
+               @Html.Raw(((ViewBag.header) ? "checked=\"checked\"" : ""))/>
+        </div>
         <div class="editor-label">
             @Html.LabelFor(model => model.Form)
         </div>
@@ -35,7 +43,7 @@
         </div>
 
         <div class="editor-label">
-            An .xlsx file to upload
+            <label for="xlsFile">An .xlsx file to upload</label>
         </div>
         <div class="editor-field">
             <input id="xlsFile" type="file" name="xlsFile" />
@@ -46,16 +54,10 @@
         </div>
 
         <div class="editor-label">
-            Number of sheet with questions
+            <label for="sheetNumber">Number of sheet with questions</label>
         </div>
         <div class="editor-field">
             <input id="sheetNumber" type="text" name="sheetNumber" value=@ViewBag.SheetNumber />
-        </div>
-        <div class="editor-label">
-             Has header?
-        </div>
-        <div class="editor-field">
-        <input type="checkbox" name="header" value = "true"/>
         </div>
         <p>
             <input type="submit" value="Create" />
