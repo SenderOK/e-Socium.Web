@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using eSocium.Web.Models.DAL;
 using System.Web.Security;
+using eSocium.Web.Models.DAL;
 
 namespace eSocium.Web.Models
 {

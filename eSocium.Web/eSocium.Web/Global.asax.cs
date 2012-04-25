@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.Entity;
+using System.Threading;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using System.Data.Entity;
 using eSocium.Web.Models.DAL;
-using System.Globalization;
-using System.Threading;
 using eSocium.Web.Utility;
 
 namespace eSocium.Web
