@@ -37,7 +37,7 @@ namespace eSocium.Web.Controllers.OpenQuestions
             }
             Question question = new Question();
             question.Poll = poll;
-            question.Mark = "q_" + poll.Questions.Count.ToString();
+            question.Label = "q_" + poll.Questions.Count.ToString();
             ViewBag.SheetNumber = 1;
             ViewBag.header = false;
             return View(question);
@@ -77,7 +77,7 @@ namespace eSocium.Web.Controllers.OpenQuestions
                             Answer answer = new Answer();
                             answer.Question = question;
                             answer.RespondentId = resp_answ.Key;
-                            answer.Form = resp_answ.Value;
+                            answer.Text = resp_answ.Value;
                             db.Answers.Add(answer);
                         }
                     }
@@ -86,7 +86,7 @@ namespace eSocium.Web.Controllers.OpenQuestions
                         for (int i = 0; i < answers.Length; ++i)
                         {
                             Question quest = new Question();
-                            quest.Form = formulates[i];
+                            quest.Wording = formulates[i];
                             quest.Poll = question.Poll;
                             db.Questions.Add(quest);
 
@@ -95,8 +95,8 @@ namespace eSocium.Web.Controllers.OpenQuestions
                                 Answer answer = new Answer();
                                 answer.Question = quest;
                                 answer.RespondentId = resp_answ.Key;
-                                answer.Form = resp_answ.Value;
-                                if (answer.Form.Length != 0)
+                                answer.Text = resp_answ.Value;
+                                if (answer.Text.Length != 0)
                                 {
                                     db.Answers.Add(answer);
                                 }

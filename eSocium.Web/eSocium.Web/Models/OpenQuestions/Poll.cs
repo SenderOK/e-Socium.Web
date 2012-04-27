@@ -31,12 +31,13 @@ namespace eSocium.Web.Models.OpenQuestions
         [Key]
         [Required]
         public int QuestionId { get; set; }
-        public virtual Poll Poll { get; set; }
-        [Display(Name = "Formulation")]
         [Required]
-        public string Form { get; set; }
-        [Display(Name = "Mark")]
-        public string Mark { get; set; }
+        public virtual Poll Poll { get; set; }
+        [Required]
+        [Display(Name = "Wording")]
+        public string Wording { get; set; }
+        [Display(Name = "Label")]
+        public string Label { get; set; }
         public virtual ICollection<Answer> Answers { get; set; }
     }
 
@@ -49,7 +50,7 @@ namespace eSocium.Web.Models.OpenQuestions
         public virtual Question Question { get; set; }
         [Required]
         public int RespondentId { get; set; }
-        public string Form { get; set; }
+        public string Text { get; set; }
     }
 
     public class RespondentAnswerTable
