@@ -20,8 +20,8 @@ namespace eSocium.Web.Models.DAL
 
             var roles = new List<Role>
             {
-                new Role { RoleId = 1, Name = "Администратор" },
-                new Role { RoleId = 2, Name = "Пользователь" }
+                new Role { RoleId = 1, RoleName = "Администратор" },
+                new Role { RoleId = 2, RoleName = "Пользователь" }
             };
             roles.ForEach(s => context.Roles.Add(s));
             context.SaveChanges();

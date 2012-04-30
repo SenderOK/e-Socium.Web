@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(
+function () {
     var Question_Form_Storage = $(Form).val();
     var Question_Mark_Storage = $(Mark).val();
 
@@ -28,4 +29,5 @@
     $(hasHeaderCheckbox).change(function () {
         SetCheckboxState();
     });
-});
+}
+);

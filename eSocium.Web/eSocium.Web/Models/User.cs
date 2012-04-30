@@ -11,17 +11,18 @@ namespace eSocium.Web.Models
         [Required]
         public int UserId { get; set; }
         [Required]
-        [Display(Name = "Логин")]
+        [Display(Name = "Login")]
         public string Login { get; set; }
         [DataType(DataType.Password)]
         [Required]
-        [Display(Name = "Пароль")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
+        [DataType(DataType.EmailAddress)]
+        [Required]
         [Display(Name = "email")]
-        [Required]
         public string Email { get; set; }
-        [Display(Name = "Роль")]
         [Required]
+        [Display(Name = "Role")]
         public int Role { get; set; }
     }
 }

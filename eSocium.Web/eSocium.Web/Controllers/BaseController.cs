@@ -14,12 +14,12 @@ namespace eSocium.Web.Controllers
             HttpCookie cultureCookie = Request.Cookies["_culture"];
             if (cultureCookie != null)
                 cultureName = cultureCookie.Value;
-            else
-                cultureName = Request.UserLanguages[0]; // obtain it from HTTP header AcceptLanguages
+            else if (Request.UserLanguages != null)
+                if (Request.UserLanguages.Length > 0)
+                    cultureName = Request.UserLanguages[0]; // obtain it from HTTP header AcceptLanguages
 
             // Validate culture name
             cultureName = CultureHelper.GetImplementedCulture(cultureName); // This is safe
-
 
             // Modify current thread's cultures            
             Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(cultureName);

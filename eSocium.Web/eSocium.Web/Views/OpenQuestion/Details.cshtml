@@ -10,17 +10,17 @@
     <legend>Question</legend>
 
     <div class="display-label">
-         @Html.DisplayNameFor(model => model.Form)
+         @Html.DisplayNameFor(model => model.Wording)
     </div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.Form)
+        @Html.DisplayFor(model => model.Wording)
     </div>
 
     <div class="display-label">
-         @Html.DisplayNameFor(model => model.Mark)
+         @Html.DisplayNameFor(model => model.Label)
     </div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.Mark)
+        @Html.DisplayFor(model => model.Label)
     </div>
     <div class="display-label">
         @Html.DisplayNameFor(model => model.Answers);
@@ -35,7 +35,7 @@
                         Respondent
                     </th>
                     <th>
-                        Formulation
+                        Answer Text
                     </th>
                 </tr>
             @foreach (var item in Model.Answers)
@@ -45,7 +45,7 @@
                         @Html.DisplayFor(model => item.RespondentId)
                     </td>
                     <td>
-                        @Html.DisplayFor(model => item.Form)
+                        @Html.DisplayFor(model => item.Text)
                     </td>
                 </tr>
             }
@@ -55,13 +55,13 @@
         else
         {
             <p>
-                There are no answers to this question.
+                There is no answers for this question.
             </p>
         }
 
     </div>
 </fieldset>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id=Model.QuestionId }) |
-    @Html.ActionLink("Back to Poll", "Details", "OpenPoll", new { id = Model.Poll.PollId }, null)
+    @Html.ActionLink("Edit the Question", "Edit", new { id=Model.QuestionId }) |
+    @Html.ActionLink("Back to the Poll", "Details", "OpenPoll", new { id = Model.Poll.PollId }, null)
 </p>

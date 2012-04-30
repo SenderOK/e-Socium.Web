@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Diagnostics;
 
 namespace eSocium.Web.Utility
 {
@@ -13,7 +14,7 @@ namespace eSocium.Web.Utility
         // Include ONLY cultures you are implementing
         private static readonly IList<string> _cultures = new List<string> {
             "en-US",  // first culture is the DEFAULT
-            "ru", // Spanish NEUTRAL culture
+            "ru", // Russian NEUTRAL culture
             "ru-RU"// Specific cultures
         };
 
@@ -33,12 +34,9 @@ namespace eSocium.Web.Utility
             if (_validCultures.Where(c => c.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Count() == 0)
                 return GetDefaultCulture(); // return Default culture if it is invalid
 
-
             // if it is implemented, accept it
             if (_cultures.Where(c => c.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                 return name; // accept it
-
-
 
             // Find a close match. For example, if you have "en-US" defined and the user requests "en-GB", 
             // the function will return closes match that is "en-US" because at least the language is the same (ie English)  
@@ -47,8 +45,6 @@ namespace eSocium.Web.Utility
                 if (c.StartsWith(n))
                     return c;
 
-
-
             // else 
             // It is not implemented
             return GetDefaultCulture(); // return Default culture as no match found
@@ -56,13 +52,12 @@ namespace eSocium.Web.Utility
 
 
         /// <summary>
-        /// Returns default culture name which is the first name decalared (e.g. en-US)
+        /// Returns default culture name which is the first name declared (e.g. en-US)
         /// </summary>
         /// <returns></returns>
         public static string GetDefaultCulture()
         {
             return _cultures[0]; // return Default culture
-
         }
 
         public static string GetCurrentCulture()
@@ -75,18 +70,12 @@ namespace eSocium.Web.Utility
             return GetNeutralCulture(Thread.CurrentThread.CurrentCulture.Name);
         }
 
-
         public static string GetNeutralCulture(string name)
         {
-            if (name.Length < 2)
+            Debug.Assert(name != null);
+            if (name.Length <= 2)
                 return name;
-
             return name.Substring(0, 2); // Read first two chars only. E.g. "en", "es"
         }
-
-
-
-
-
     }
 }

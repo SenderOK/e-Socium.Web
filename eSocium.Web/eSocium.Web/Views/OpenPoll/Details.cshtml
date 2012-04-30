@@ -2,7 +2,7 @@
 @using eSocium.Web.Models.OpenQuestions
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Poll Details";
 }
 
 <h2>@Html.DisplayFor(model => model.Name)</h2>
@@ -13,7 +13,7 @@
 @if (Model.Questions.Count != 0)
 {
     <p>
-        @Html.ActionLink("Add New", "Create", "OpenQuestion", new { poll_id = Model.PollId }, null)
+        @Html.ActionLink("Add New Questions", "Create", "OpenQuestion", new { poll_id = Model.PollId }, null)
     </p>
     <div class="display-field">
     <table>
@@ -30,10 +30,10 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(model => item.Mark)
+                @Html.DisplayFor(model => item.Label)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Form)
+                @Html.DisplayFor(model => item.Wording)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", "OpenQuestion", new { id = item.QuestionId }, null) |
@@ -48,10 +48,11 @@
 else
 {
     <p>
-        There are no questions in this poll. You may @Html.ActionLink("add new", "Create", "OpenQuestion", new { poll_id = Model.PollId }, null) whenever you want.
+        There are no questions in this poll.
+        You may @Html.ActionLink("add new questions", "Create", "OpenQuestion", new { poll_id = Model.PollId }, null) whenever you want.
     </p>
 }
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PollId }) |
+    @Html.ActionLink("Edit poll", "Edit", new { id = Model.PollId }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

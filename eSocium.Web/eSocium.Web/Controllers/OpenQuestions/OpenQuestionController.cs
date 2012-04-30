@@ -10,14 +10,14 @@ namespace eSocium.Web.Controllers.OpenQuestions
 {
     public class OpenQuestionController : Controller
     {
-        private OpenContext db = new OpenContext();
+        private OpenContext openQuestionDatabase = new OpenContext();
 
         //
         // GET: /OpenQuestion/Details/5
         [Authorize]
         public ActionResult Details(int id = 0)
         {
-            Question question = db.Questions.Find(id);
+            Question question = openQuestionDatabase.Questions.Find(id);
             if (question == null)
             {
                 return HttpNotFound();
@@ -30,91 +30,100 @@ namespace eSocium.Web.Controllers.OpenQuestions
         [Authorize]
         public ActionResult Create(int poll_id = 0)
         {
-            Poll poll = db.Polls.Find(poll_id);
+            Poll poll = openQuestionDatabase.Polls.Find(poll_id);
+            if (poll == null)
+            {
+                return HttpNotFound();
+            }
+
+            Question question = new Question();
+            question.Poll = poll;
+            question.Label = "autolabel_q" + (poll.Questions.Count+1).ToString();
+            ViewBag.SheetNumber = 1;
+            ViewBag.HasHeader = false;
+            return View(question);
+        }
+
+        //
+        // POST: /OpenQuestion/Create/
+        [Authorize]
+        [HttpPost]
+        //public ActionResult Create(Question question, HttpPostedFileBase xlsFile, int poll_id, int sheetNumber, bool? header)
+        public ActionResult Create(int pollId, HttpPostedFileBase xlsFile, bool? hasHeader, int sheetNumber, string Wording, string Label)
+        {
+            Poll poll = openQuestionDatabase.Polls.Find(pollId);
             if (poll == null)
             {
                 return HttpNotFound();
             }
             Question question = new Question();
             question.Poll = poll;
-            question.Label = "q_" + poll.Questions.Count.ToString();
-            ViewBag.SheetNumber = 1;
-            ViewBag.header = false;
-            return View(question);
-        }
-
-        //
-        // POST: /OpenQuestion/Create/
-
-        [Authorize]
-        [HttpPost]
-        public ActionResult Create(Question question, HttpPostedFileBase xlsFile, int poll_id, int sheetNumber, bool? header)
-        {
-            Poll poll = db.Polls.Find(poll_id);
-            if (poll == null)
-            {
-                return HttpNotFound();
-            }
-            bool hasHeader = header ?? false;
-            question.Poll = poll;
+            question.Wording = Wording;
+            question.Label = Label;
             ViewBag.SheetNumber = sheetNumber;
-            ViewBag.header = hasHeader;
-
-            
+            ViewBag.HasHeader = hasHeader ?? false;
+            if (xlsFile == null)
+                ModelState.AddModelError("xlsFile", "No file uploaded");
+            else if (xlsFile.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                ModelState.AddModelError("xlsFile", "Wrong file type");
+            if (!ModelState.IsValid)
+            {
+                return View(question);
+            }
 
             try
             {
-                RespondentAnswerTable RAT = new RespondentAnswerTable(xlsFile, hasHeader, sheetNumber);
-                List<KeyValuePair<int, string>>[] answers = RAT.answers;
-                List<string> formulates = RAT.header;
-                if (ModelState.IsValid)
+                RespondentAnswerTable RAT = new RespondentAnswerTable(xlsFile, ViewBag.HasHeader, ViewBag.SheetNumber);
+                if (!ViewBag.HasHeader)
                 {
-                    if (!hasHeader)
+                    if (RAT.answers.Length != 1)
+                        throw new InvalidOperationException("One question was expected");
+                    // добавляем один вопрос
+                    // question.Poll
+                    // question.Wording
+                    // question.Label
+                    openQuestionDatabase.Questions.Add(question);
+
+                    foreach (var resp_answ in RAT.answers[0])
                     {
-                        db.Questions.Add(question);
-                        foreach (var resp_answ in answers[0])
+                        Answer answer = new Answer();
+                        answer.Question = question;
+                        answer.RespondentId = resp_answ.Key;
+                        answer.Text = resp_answ.Value;
+                        openQuestionDatabase.Answers.Add(answer);
+                    }
+                }
+                else
+                {
+                    // добавляем несколько вопросов
+                    for (int i = 0; i < RAT.answers.Length; ++i)
+                    {
+                        Question qstn = new Question();
+                        qstn.Poll = poll;
+                        qstn.Wording = RAT.questionLabels[i];
+                        qstn.Label = RAT.questionLabels[i];
+                        openQuestionDatabase.Questions.Add(qstn);
+
+                        foreach (var resp_answ in RAT.answers[i])
                         {
                             Answer answer = new Answer();
-                            answer.Question = question;
+                            answer.Question = qstn;
                             answer.RespondentId = resp_answ.Key;
                             answer.Text = resp_answ.Value;
-                            db.Answers.Add(answer);
+                            openQuestionDatabase.Answers.Add(answer);
                         }
                     }
-                    else
-                    {
-                        for (int i = 0; i < answers.Length; ++i)
-                        {
-                            Question quest = new Question();
-                            quest.Wording = formulates[i];
-                            quest.Poll = question.Poll;
-                            db.Questions.Add(quest);
-
-                            foreach (var resp_answ in answers[i])
-                            {
-                                Answer answer = new Answer();
-                                answer.Question = quest;
-                                answer.RespondentId = resp_answ.Key;
-                                answer.Text = resp_answ.Value;
-                                if (answer.Text.Length != 0)
-                                {
-                                    db.Answers.Add(answer);
-                                }
-                            }
-                        }
-                    }
-
-                    db.SaveChanges();
-                    return RedirectToAction("Details", "OpenPoll", new { id = poll.PollId });
                 }
 
-                return View(question);
+                openQuestionDatabase.SaveChanges();
+                return RedirectToAction("Details", "OpenPoll", new { id = poll.PollId });
             }
             catch (Exception e)
             {
-                ViewBag.FileError = "You must upload a valid xlsx file! " + e.Message;
-                return View(question);
+                ModelState.AddModelError(String.Empty, e);
             }
+
+            return View(question);
         }
 
         //
@@ -122,7 +131,7 @@ namespace eSocium.Web.Controllers.OpenQuestions
         [Authorize]
         public ActionResult Edit(int id = 0)
         {
-            Question question = db.Questions.Find(id);
+            Question question = openQuestionDatabase.Questions.Find(id);
             if (question == null)
             {
                 return HttpNotFound();
@@ -135,12 +144,19 @@ namespace eSocium.Web.Controllers.OpenQuestions
 
         [Authorize]
         [HttpPost]
-        public ActionResult Edit(Question question)
+        public ActionResult Edit(int QuestionID, string Wording, string Label)
         {
+            Question question = openQuestionDatabase.Questions.Find(QuestionID);
+            if (question == null)
+            {
+                return HttpNotFound();
+            }
             if (ModelState.IsValid)
             {
-                db.Entry(question).State = EntityState.Modified;
-                db.SaveChanges();
+                question.Wording = Wording;
+                question.Label = Label;
+                openQuestionDatabase.Entry(question).State = EntityState.Modified;
+                openQuestionDatabase.SaveChanges();
                 return View("Details", question);
             }
             return View(question);
@@ -152,7 +168,7 @@ namespace eSocium.Web.Controllers.OpenQuestions
         [Authorize]
         public ActionResult Delete(int id = 0)
         {
-            Question question = db.Questions.Find(id);
+            Question question = openQuestionDatabase.Questions.Find(id);
             if (question == null)
             {
                 return HttpNotFound();
@@ -167,16 +183,16 @@ namespace eSocium.Web.Controllers.OpenQuestions
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Question question = db.Questions.Find(id);
+            Question question = openQuestionDatabase.Questions.Find(id);
             int poll_id = question.Poll.PollId;
-            db.Questions.Remove(question);
-            db.SaveChanges();
+            openQuestionDatabase.Questions.Remove(question);
+            openQuestionDatabase.SaveChanges();
             return RedirectToAction("Details", "OpenPoll", new { id = poll_id });
         }
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            openQuestionDatabase.Dispose();
             base.Dispose(disposing);
         }
     }

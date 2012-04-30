@@ -8,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using eSocium.Web.Models.DAL;
 using eSocium.Web.Utility;
+using eSocium.Web.Models.OpenQuestions.DAL;
 
 namespace eSocium.Web
 {
@@ -46,16 +47,14 @@ namespace eSocium.Web
             if (cultureCookie != null)
                 cultureName = cultureCookie.Value;
             else
-                cultureName = "ru-RU";//Request.UserLanguages[0]; // obtain it from HTTP header AcceptLanguages
+                cultureName = "en-US";//Request.UserLanguages[0]; // obtain it from HTTP header AcceptLanguages
 
             // Validate culture name
             cultureName = CultureHelper.GetImplementedCulture(cultureName); // This is safe
 
-
-            // Modify current thread's cultures            
+            // Modify current thread culture
             Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(cultureName);
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
-
         }
 
         protected void Application_Start()
@@ -64,9 +63,12 @@ namespace eSocium.Web
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
             BundleTable.Bundles.RegisterTemplateBundles();
+            // Modify current thread culture
             Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+            // Reinitialize databases if models change
             Database.SetInitializer<UserContext>(new UserInitializer());
+            Database.SetInitializer<OpenContext>(new DropCreateDatabaseIfModelChanges<OpenContext>());
         }
     }
 }

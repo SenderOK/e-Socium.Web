@@ -11,7 +11,7 @@ namespace eSocium.Web.Models
         [Required]
         public int RoleId { get; set; }
         [Required]
-        [Display(Name = "Роль")]
-        public string Name { get; set; }
+        [Display(Name = "Role")]
+        public string RoleName { get; set; }
     }
 }

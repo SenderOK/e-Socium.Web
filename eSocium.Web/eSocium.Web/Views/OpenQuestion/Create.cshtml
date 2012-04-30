@@ -1,10 +1,11 @@
 ﻿@model eSocium.Web.Models.OpenQuestions.Question
+@using eSocium.Web.Models.OpenQuestions
 
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h2>Create question</h2>
 
 <script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
@@ -12,58 +13,56 @@
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    @Html.ValidationSummary(true)
+    @Html.ValidationSummary(false)
+    <div class="error">
+        @Html.ViewData.ModelState.GetErrorsFromModelState().Aggregate(String.Empty, (x, y) => x + "> " + y + "\n")
+    </div>
+    
+    @Html.Hidden("pollId", Model.Poll.PollId)
+
+    <div class="editor-label">
+        <label for="xlsFile">An .xlsx file to upload</label>
+    </div>
+    <div class="editor-field">
+        <input type="file" name="xlsFile" lang="en-us"/>
+        @Html.ValidationMessage("xlsFile")
+    </div>
+
+    <div class="editor-label">
+        <label for="hasHeader">Has the Excel file a header?</label>
+        <input type="checkbox" name="hasHeader" value="true"
+               @Html.Raw(ViewBag.HasHeader ? "checked=\"checked\"" : "")/>
+    </div>
+
+    <div class="editor-label">
+        <label for="sheetNumber">The number of Excel book sheet to read</label>
+        <input type="text" name="sheetNumber" value=@ViewBag.SheetNumber />
+    </div>
 
     <fieldset>
-        <legend>Question</legend>
-
-        @Html.Hidden("poll_id", Model.Poll.PollId)
-
+        <legend>Question info</legend>
+        The data will be used if the Excel file has no header.
         <div class="editor-label">
-             <label for="header">Has header?</label>
+            @Html.LabelFor(model => model.Wording)
         </div>
         <div class="editor-field">
-            <input type="checkbox" name="header" value = "true" id="hasHeaderCheckbox" 
-               @Html.Raw(((ViewBag.header) ? "checked=\"checked\"" : ""))/>
-        </div>
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Form)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Form)
-            @Html.ValidationMessageFor(model => model.Form)
+            @Html.EditorFor(model => model.Wording)
+            @Html.ValidationMessageFor(model => model.Wording)
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.Mark)
+            @Html.LabelFor(model => model.Label)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Mark)
-            @Html.ValidationMessageFor(model => model.Mark)
+            @Html.EditorFor(model => model.Label)
+            @Html.ValidationMessageFor(model => model.Label)
         </div>
-
-        <div class="editor-label">
-            <label for="xlsFile">An .xlsx file to upload</label>
-        </div>
-        <div class="editor-field">
-            <input id="xlsFile" type="file" name="xlsFile" />
-            @if (ViewBag.FileError != null)
-            {
-                @ViewBag.FileError.ToString();
-            }
-        </div>
-
-        <div class="editor-label">
-            <label for="sheetNumber">Number of sheet with questions</label>
-        </div>
-        <div class="editor-field">
-            <input id="sheetNumber" type="text" name="sheetNumber" value=@ViewBag.SheetNumber />
-        </div>
-        <p>
-            <input type="submit" value="Create" />
-        </p>
     </fieldset>
-}
+
+        <p>
+        <input type="submit" value="Create"/>
+    </p>
+} @*end of form*@
 
 <div>
     @Html.ActionLink("Back to Poll", "Details", "OpenPoll", new { id = Model.Poll.PollId }, null)

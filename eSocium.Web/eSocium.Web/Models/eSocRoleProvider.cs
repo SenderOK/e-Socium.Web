@@ -44,7 +44,7 @@ namespace eSocium.Web.Models
 
         public override string[] GetAllRoles()
         {
-            return db.Roles.Select(r => r.Name).ToArray();
+            return db.Roles.Select(r => r.RoleName).ToArray();
         }
 
         public override string[] GetRolesForUser(string username)
@@ -59,13 +59,13 @@ namespace eSocium.Web.Models
                 throw new Exception("Не найден пользователь " + username);
             }
             List<string> result = new List<string>();
-            result.Add(db.Roles.Find(user.Role).Name);
+            result.Add(db.Roles.Find(user.Role).RoleName);
             return result.ToArray();
         }
 
         public override string[] GetUsersInRole(string roleName)
         {
-            var roleId = db.Roles.First(r => r.Name.Equals(roleName));
+            var roleId = db.Roles.First(r => r.RoleName.Equals(roleName));
             if (roleId == null)
             {
                 throw new Exception("Не найдена роль " + roleName);

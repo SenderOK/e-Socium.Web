@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using OfficeOpenXml;
+using System.Web.Mvc;
+using System.Linq;
 
 namespace eSocium.Web.Models.OpenQuestions
 {
@@ -55,8 +57,10 @@ namespace eSocium.Web.Models.OpenQuestions
 
     public class RespondentAnswerTable
     {
-        public List<KeyValuePair<int, string>> [] answers { get; set; }
-        public List<string> header { get; set; }
+        // Массив словарей (для каждого вопроса набор пар)
+        public Dictionary<int,string>[] answers { get; private set; }
+        // Метки столбцов листа
+        public List<string> questionLabels { get; private set; }
         public RespondentAnswerTable(HttpPostedFileBase xlsFile, bool hasHeader, int sheet_num) 
         {
             if (xlsFile == null)
@@ -68,45 +72,56 @@ namespace eSocium.Web.Models.OpenQuestions
                 throw new Exception("Uploaded file is not an xlsx file");
             }
 
+            ExcelPackage package = new ExcelPackage(xlsFile.InputStream);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets[sheet_num];
+
+            int question_count = 1;
+
+            questionLabels = new List<string>();
             int first_row = 1;
             if (hasHeader)
             {
                 ++first_row;
-            }
-
-            ExcelPackage package = new ExcelPackage(xlsFile.InputStream);
-            ExcelWorksheet worksheet = package.Workbook.Worksheets[sheet_num];
-            int question_count = 1;
-            header = new List<string>();
-            if (hasHeader)
-            {
                 for (; worksheet.Cells[1, question_count + 1].Value != null; ++question_count)
-                {
-                    header.Add(worksheet.Cells[1, question_count + 1].Value.ToString());
-                }
+                    questionLabels.Add(worksheet.Cells[1, question_count + 1].Value.ToString());
                 --question_count;
             }
-            answers = new List<KeyValuePair<int, string>>[question_count];
-            for (int i = 0; i < answers.Length; ++i) {
-                answers[i] = new List<KeyValuePair<int, string>>();
-            }
 
-            int RespCol = 1;
-            for (int row = first_row; worksheet.Cells[row, RespCol].Value != null; row++)
+            answers = new Dictionary<int, string>[question_count];
+            for (int i = 0; i < answers.Length; ++i)
+                answers[i] = new Dictionary<int, string>();
+
+            const int RespCol = 1;
+            for (int row = first_row; worksheet.Cells[row, RespCol].Value != null; ++row)
             {
-                try
-                {   
+                try {
                     int resp_id = int.Parse(worksheet.Cells[row, RespCol].Value.ToString());
-                    string[] resp_answers = new string[question_count];
-                    for (int question = 0; question < answers.Length; ++question) 
+                    for (int question = 0; question < question_count; ++question) 
                     {
-                        resp_answers[question] = (worksheet.Cells[row, question + 2].Value ?? "").ToString();
-                        answers[question].Add(new KeyValuePair<int, string> (resp_id, resp_answers[question]));
+                        string resp_answer = (worksheet.Cells[row, question + 2].Value ?? "").ToString();
+                        if (!String.IsNullOrWhiteSpace(resp_answer))
+                            answers[question].Add(resp_id, resp_answer); // throws an exception when resp_id has duplicates
                     }
-                }catch (Exception e) {
-                    throw new Exception("Error parsing row " + row.ToString() + ". Maybe wrong format. Exception is " + e.ToString());
+                }
+                catch (Exception e) {
+                    throw new Exception("Error parsing row " + row.ToString() + ". Maybe wrong file format.\nException is " + e.ToString());
                 }
             }
+        }
+    }
+
+    public static class ModelStateExtensions
+    {
+        public static IEnumerable<string> GetErrorsFromModelState(this ModelStateDictionary msd)
+        {
+            return msd.SelectMany(x => x.Value.Errors.Select(
+                error =>
+                    error.ErrorMessage
+                    +(error.Exception != null ?
+                        ("("+error.Exception.Message+")")
+                        : "")
+                    )
+                );
         }
     }
 }
