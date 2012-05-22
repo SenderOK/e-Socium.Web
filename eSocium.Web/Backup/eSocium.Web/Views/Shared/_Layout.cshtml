@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - @Globalization.MainTitle</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/css")" rel="stylesheet" type="text/css" />
+    <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/themes/base/css")" rel="stylesheet" type="text/css" />
+    <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Scripts/js")" type="text/jscript"></script>
+    <script src="@Url.Content("~/Scripts/globalize.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.cookie.js")" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width" />
+    <script type="text/javascript">
+    $(document).ready(function () {
+    $(".lang-picker a." + Globalize.culture().name.toLowerCase()).prependTo($(".lang-picker"));
+
+                $(".lang-picker a").click(function(){
+
+                if ($(this).hasClass(Globalize.culture().name.toLowerCase()))
+                    return false; // do nothing
+
+                $.cookie("_culture", $(this).attr("class") , {expires : 365, path: '/'});
+                window.location.reload(); // reload 
+
+                });
+                });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p class="site-title">@Html.ActionLink("e-Socium", "Index", "Home")</p>
+            </div>
+            <div class="float-right">
+                <section id="login">
+                    <div class="lang-picker-wrapper">
+                        <span class="lang-picker"><a class="en-us" href="javascript:void(0);">English</a> <a class="@(eSocium.Web.Utility.CultureHelper.GetNeutralCulture(Request.UserLanguages[0].ToLower()) == "ru" ? Request.UserLanguages[0].ToLower() : "ru")" href="javascript:void(0);">
+                            Русский</a> </span>
+                    </div>
+                    @Html.Partial("_LoginPartial")
+                </section>
+                <nav>
+                    <ul id="menu">
+                        <li>@Html.ActionLink(Globalization.OpenQuestions, "Index", "OpenPoll")</li>
+                        <li>@Html.ActionLink(Globalization.Dictionary, "Index", "Dictionary")</li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div id="body">
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+    <footer>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p>
+                    &copy; @DateTime.Now.Year - e-Socium @Globalization.MainTitle</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

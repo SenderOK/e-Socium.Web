@@ -1,0 +1,15 @@
+@{
+    ViewBag.Title = "e-Socium";
+}
+<h1>
+    @Globalization.Homepage</h1>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div style="margin-top: 15px;">
+        @Globalization.Hello, <b>@User.Identity.Name</b></div>
+    if (User.IsInRole("Администратор"))
+    {
+        <div> @Globalization.AdminRoleMessage</div>
+    }
+}

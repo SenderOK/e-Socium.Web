@@ -1,0 +1,69 @@
+﻿@model eSocium.Web.Models.OpenQuestions.Question
+@using eSocium.Web.Models.OpenQuestions
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create question</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+<script src="@Url.Content("~/Scripts/Open/CreateQuestions.js")"></script>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(false)
+    <div class="error">
+        @Html.ViewData.ModelState.GetErrorsFromModelState().Aggregate(String.Empty, (x, y) => x + "> " + y + "\n")
+    </div>
+    
+    @Html.Hidden("pollId", Model.Poll.PollId)
+
+    <div class="editor-label">
+        <label for="xlsFile">An .xlsx file to upload</label>
+    </div>
+    <div class="editor-field">
+        <input type="file" name="xlsFile" lang="en-us"/>
+        @Html.ValidationMessage("xlsFile")
+    </div>
+
+    <div class="editor-label">
+        <label for="hasHeader">Has the Excel file a header?</label>
+        <input type="checkbox" name="hasHeader" value="true"
+               @Html.Raw(ViewBag.HasHeader ? "checked=\"checked\"" : "")/>
+    </div>
+
+    <div class="editor-label">
+        <label for="sheetNumber">The number of Excel book sheet to read</label>
+        <input type="text" name="sheetNumber" value=@ViewBag.SheetNumber />
+    </div>
+
+    <fieldset>
+        <legend>Question info</legend>
+        The data will be used if the Excel file has no header.
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Wording)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Wording)
+            @Html.ValidationMessageFor(model => model.Wording)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Label)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Label)
+            @Html.ValidationMessageFor(model => model.Label)
+        </div>
+    </fieldset>
+
+        <p>
+        <input type="submit" value="Create"/>
+    </p>
+} @*end of form*@
+
+<div>
+    @Html.ActionLink("Back to Poll", "Details", "OpenPoll", new { id = Model.Poll.PollId }, null)
+</div>

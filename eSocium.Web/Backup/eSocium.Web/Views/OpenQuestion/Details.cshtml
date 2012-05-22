@@ -1,0 +1,67 @@
+﻿@model eSocium.Web.Models.OpenQuestions.Question
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Question</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Wording)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Wording)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Label)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Label)
+    </div>
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.Answers);
+    </div>
+    <div class="display-label">
+        @if (Model.Answers.Count != 0)
+        {
+            <div class="display-field">
+            <table>
+                <tr>
+                    <th>
+                        Respondent
+                    </th>
+                    <th>
+                        Answer Text
+                    </th>
+                </tr>
+            @foreach (var item in Model.Answers)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(model => item.RespondentId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Text)
+                    </td>
+                </tr>
+            }
+            </table>
+            </div>
+        }
+        else
+        {
+            <p>
+                There is no answers for this question.
+            </p>
+        }
+
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit the Question", "Edit", new { id=Model.QuestionId }) |
+    @Html.ActionLink("Back to the Poll", "Details", "OpenPoll", new { id = Model.Poll.PollId }, null)
+</p>

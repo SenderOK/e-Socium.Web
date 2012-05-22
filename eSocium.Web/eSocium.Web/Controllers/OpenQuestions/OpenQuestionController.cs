@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using eSocium.Web.Models.OpenQuestions;
 using eSocium.Web.Models.OpenQuestions.DAL;
+using eSocium.Web.Models.OpenQuestions.Tables;
 
 namespace eSocium.Web.Controllers.OpenQuestions
 {
@@ -62,18 +63,23 @@ namespace eSocium.Web.Controllers.OpenQuestions
             question.Label = Label;
             ViewBag.SheetNumber = sheetNumber;
             ViewBag.HasHeader = hasHeader ?? false;
-            if (xlsFile == null)
-                ModelState.AddModelError("xlsFile", "No file uploaded");
-            else if (xlsFile.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                ModelState.AddModelError("xlsFile", "Wrong file type");
-            if (!ModelState.IsValid)
-            {
-                return View(question);
-            }
 
             try
             {
-                RespondentAnswerTable RAT = new RespondentAnswerTable(xlsFile, ViewBag.HasHeader, ViewBag.SheetNumber);
+                RespondentAnswerTable RAT = null;
+                try 
+                {
+                    RAT = new RespondentAnswerTable(Methods.GetWorksheetFromHttpFile(xlsFile, ViewBag.SheetNumber), 
+                                              ViewBag.HasHeader);
+                } 
+                catch (Exception e) 
+                {
+                    ModelState.AddModelError("xlsFile", e);
+                    if (!ModelState.IsValid)
+                    {
+                        return View(question);
+                    }
+                }
                 if (!ViewBag.HasHeader)
                 {
                     if (RAT.answers.Length != 1)
